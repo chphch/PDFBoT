@@ -193,18 +193,18 @@ def runForDir(dirpath: Path):
 	# 	list(tqdm(pool.imap_unordered(extract_text, filepaths), total=len(filepaths)))
 
 
-def run():
-	rootDirPath = ''
+def run(rootDirPath: Path):
 	dirpaths = []
+	for decadeDirPath in rootDirPath.iterdir():
+		if decadeDirPath.is_dir():
+			for yearDirPath in decadeDirPath.iterdir():
+				if yearDirPath.is_dir():
+					dirpaths.append(yearDirPath)
+	for dirpath in dirpaths:
+		runForDir(dirpath)
 
 
 if __name__ == '__main__':
 #    app.run()
-	filepath = '/Users/chphch/Downloads/Articles/2000-2009/2007/JCP_2007_1_1.pdf'
-	# input: directory => 
-	# filename = 'JCP_2007_1_1.pdf'
-	dirpath = Path('/Users/chphch/Downloads/Articles/2000-2009/2007')
-	runForDir(dirpath)
-	# htmlFilePath = pdftohtml_test(str(os.path.join(app.config['UPLOAD_FOLDER'], filename)))
-	# text =  getTextFrom2HTML(htmlFilePath)
-	# print(text)
+	rootDirPath = Path('/Users/chphch/Downloads/Articles')
+	run(rootDirPath)
