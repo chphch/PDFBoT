@@ -104,6 +104,8 @@ def getTwoPeaks(pages):
 
     initMedian = 0
     xCountList=[]
+    if not listX:
+        return 0, 0, getlayoutfromlist([])
     while initMedian<listX[-1]:
         temp=numItemInInterval(listX,initMedian,initMedian+5)
         xCountList.append(deepcopy(temp))

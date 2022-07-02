@@ -192,8 +192,8 @@ def calBaseFSandLineSpace(pages):
             countLineSpace[ls] = 1
         else:
             countLineSpace[ls] = countLineSpace[ls]+1
-    baseLineSpace = max(countLineSpace, key=countLineSpace.get)
-    baseFS = max(countFS, key=countFS.get)
+    baseLineSpace = max(countLineSpace, key=countLineSpace.get) if countLineSpace else 0
+    baseFS = max(countFS, key=countFS.get) if countFS else 0
 
     for page in pages:
         for key in page:
@@ -265,7 +265,7 @@ def getSecondMostX(page):
             countX[fs] = 1
         else:
             countX[fs] = countX[fs]+1
-    maxX= max(countX, key=countX.get)
+    maxX= max(countX, key=countX.get) if countX else 0
     del countX[maxX]
     return max(countX, key=countX.get)
 
