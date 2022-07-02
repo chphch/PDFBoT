@@ -197,8 +197,10 @@ def getMostFreValueOfKey(newpage, key):
             countKey[value] = 1
         else:
             countKey[value] = countKey[value]+1
-
-    return max(countKey, key=countKey.get)
+    if countKey:
+        return max(countKey, key=countKey.get)
+    else:
+        return 0
 
 # calculate most frequent font-size and lineSpace
 #Page is a list of line, line is a list of txtNodeDict
