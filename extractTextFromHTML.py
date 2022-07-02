@@ -250,7 +250,10 @@ def getMostFreValueOfKey(page, key):
         else:
             countKey[value] = countKey[value]+1
 
-    return max(countKey, key=countKey.get)
+    if countKey:
+        return max(countKey, key=countKey.get)
+    else:
+        return 0
 
 # get text x(left of new paragraph) of page
 # page is a list of class of the div in that page

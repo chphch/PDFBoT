@@ -187,10 +187,10 @@ def extract_text(filepath: str):
 
 def runForDir(dirpath: Path):
 	filepaths = [str(filepath) for filepath in dirpath.glob('*.pdf')]
-	for filepath in filepaths[:1]:
-		extract_text(filepath)
-	# with Pool() as pool:
-	# 	list(tqdm(pool.imap_unordered(extract_text, filepaths), total=len(filepaths)))
+	# for filepath in filepaths[:1]:
+		# extract_text(filepath)
+	with Pool() as pool:
+		list(tqdm(pool.imap_unordered(extract_text, filepaths), total=len(filepaths)))
 
 
 def run(rootDirPath: Path):
@@ -206,5 +206,5 @@ def run(rootDirPath: Path):
 
 if __name__ == '__main__':
 #    app.run()
-	rootDirPath = Path('/Users/chphch/Downloads/Articles')
+	rootDirPath = Path('/root/Articles')
 	run(rootDirPath)
