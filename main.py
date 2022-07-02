@@ -78,8 +78,7 @@ def pdftohtml_test(subpath):
 	filePath = subpath
 	# unlock pdf
 	pdf=pikepdf.open(filePath)
-	filepath_path = Path(filePath)
-	unlockedFile = str(filepath_path.parent / filepath_path.name.replace(' ','_').replace('-','_').replace('.pdf','_unlocked.pdf'))
+	unlockedFile = str(Path(app.config['UPLOAD_FOLDER']) / Path(filePath).name.replace(' ','_').replace('-','_').replace('.pdf','_unlocked.pdf'))
 	pdf.save(unlockedFile)
 	filePath = unlockedFile
 	fileName = os.path.basename(filePath)
@@ -97,7 +96,7 @@ def pdftohtml_test(subpath):
 	htmlFilePath = filePath.replace('.pdf', '')+"/"+fileName.replace('.pdf', '.html')
 	print('html file path = ' + str(htmlFilePath))
 
-	return htmlFilePath, unlockedFile
+	return htmlFilePath
 
 @app.route('/downloadPDFtest/<path:subpath>')
 def downloadPDF(subpath):
@@ -175,36 +174,27 @@ def pdftotextAuto(auto, subpath):
 	return string.replace('  ', ' ')
 
 
-def extract_text(filepath: str):
-	htmlFilePath, unlockedFile = pdftohtml_test(filepath)
+def extract_text(filepath: Path):
+	htmlFilePath = pdftohtml_test(str(filepath))
 	text = getTextFrom2HTML(htmlFilePath)
-	with open(filepath.replace('.pdf', '.txt'), 'w') as fp:
+	with open(str(filepath).replace('.pdf', '.txt'), 'w') as fp:
 		fp.writelines([line + '\n' for line in text])
-	os.remove(unlockedFile)
-	path_unlockedFile = Path(unlockedFile)
-	shutil.rmtree(path_unlockedFile.parent / path_unlockedFile.stem)
-	
-
-def runForDir(dirpath: Path):
-	filepaths = [str(filepath) for filepath in dirpath.glob('*.pdf')]
-	# for filepath in filepaths[:1]:
-		# extract_text(filepath)
-	with Pool() as pool:
-		list(tqdm(pool.imap_unordered(extract_text, filepaths), total=len(filepaths)))
 
 
 def run(rootDirPath: Path):
-	dirpaths = []
+	filepaths = []
 	for decadeDirPath in rootDirPath.iterdir():
 		if decadeDirPath.is_dir():
 			for yearDirPath in decadeDirPath.iterdir():
 				if yearDirPath.is_dir():
-					dirpaths.append(yearDirPath)
-	for dirpath in dirpaths:
-		runForDir(dirpath)
-
+					for filepath in yearDirPath.iterdir():
+						if filepath.suffix == '.pdf':
+							filepaths.append(filepath)
+	with Pool() as pool:
+		list(tqdm(pool.imap_unordered(extract_text, filepaths), total=len(filepaths)))
 
 if __name__ == '__main__':
 #    app.run()
 	rootDirPath = Path('/root/Articles')
 	run(rootDirPath)
+	# extract_text('/root/Articles/2000-2009/2007/JCP_2007_1_1.pdf')
